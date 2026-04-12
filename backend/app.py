@@ -7,20 +7,25 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 from groq import Groq
-from hindsight import HindsightClient  # adjust to your Hindsight package
+from hindsight_integration import save_to_memory, get_context, build_context_prompt
 
 # Load .env variables
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # allows frontend to connect
+CORS(app)
 
-# --- API Clients ---
+# --- Groq Client ---
 groq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-hindsight_client = HindsightClient(api_key=os.getenv("HINDSIGHT_API_KEY"))
+
+# Session ID — simple fixed ID for demo (can make dynamic later)
+SESSION_ID = "demo_session_001"
+
+# in-memory history store for /history endpoint
+conversation_history = []
 
 
-# ── 1. POST /chat ──────────────────────────────────────────
+# ── 1. POST /chat ───────────────────────────────────────────
 @app.route("/chat", methods=["POST"])
 def chat():
     """Receive user message → Hindsight memory → Groq LLM → return reply."""
@@ -31,15 +36,15 @@ def chat():
         if not user_message:
             return jsonify({"error": "Message cannot be empty"}), 400
 
-        # Step 1: get memory context from Hindsight
-        memory_context = hindsight_client.get_context(user_message)
+        # Step 1: build context from Hindsight memory
+        memory_context = build_context_prompt(SESSION_ID, num_messages=5)
 
         # Step 2: build messages for Groq
         messages = [
             {
                 "role": "system",
                 "content": (
-                    "You are a helpful AI assistant. "
+                    "You are a helpful customer support AI assistant. "
                     "Use the memory context below to personalise your response:\n"
                     f"{memory_context}"
                 )
@@ -56,11 +61,12 @@ def chat():
         )
         ai_reply = response.choices[0].message.content
 
-        # Step 4: save exchange to Hindsight
-        hindsight_client.save_exchange(
-            user_message=user_message,
-            ai_response=ai_reply
-        )
+        # Step 4: save to Hindsight memory
+        save_to_memory(user_message, ai_reply, SESSION_ID)
+
+        # Step 5: also save locally for /history
+        conversation_history.append({"text": user_message, "sender": "user"})
+        conversation_history.append({"text": ai_reply, "sender": "bot"})
 
         return jsonify({"reply": ai_reply}), 200
 
@@ -68,30 +74,21 @@ def chat():
         return jsonify({"error": str(e)}), 500
 
 
-# ── 2. GET /history ────────────────────────────────────────
+# ── 2. GET /history ─────────────────────────────────────────
 @app.route("/history", methods=["GET"])
 def get_history():
-    """Return full conversation history from Hindsight."""
-    try:
-        history = hindsight_client.get_history()
-        return jsonify({"history": history}), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    """Return conversation history."""
+    return jsonify(conversation_history), 200
 
 
-# ── 3. POST /reset ─────────────────────────────────────────
+# ── 3. POST /reset ──────────────────────────────────────────
 @app.route("/reset", methods=["POST"])
 def reset_memory():
-    """Clear all conversation memory from Hindsight."""
-    try:
-        hindsight_client.clear_memory()
-        return jsonify({"message": "Memory cleared successfully"}), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    """Clear conversation history."""
+    conversation_history.clear()
+    return jsonify({"message": "Memory cleared successfully"}), 200
 
 
-# ── Run server ─────────────────────────────────────────────
+# ── Run server ──────────────────────────────────────────────
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

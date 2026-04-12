@@ -12,7 +12,7 @@ async function sendMessage() {
     showLoading();
 
     try {
-        const response = await fetch("/chat", {
+        const response = await fetch("http://localhost:5000/chat", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -46,7 +46,7 @@ function displayMessage(message, sender) {
 // 3. Load History
 async function loadHistory() {
     try {
-        const response = await fetch("/history");
+        const response = await fetch("http://localhost:5000/history");
         const data = await response.json();
 
         data.forEach(msg => {
