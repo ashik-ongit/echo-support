@@ -1,7 +1,5 @@
 🤖 AI Agents That Learn Using Hindsight
 
-🌍 Problem Statement (Humanised)
-
 Most AI systems today forget you the moment the conversation ends.
 They respond, but they don’t **remember**, **learn**, or **grow with you**.
 
