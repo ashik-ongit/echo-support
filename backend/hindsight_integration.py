@@ -12,7 +12,7 @@ from typing import Optional
 
 # ─── Configuration ────────────────────────────────────────────────────────────
 
-HINDSIGHT_API_BASE = "https://api.hindsight.cloud/v1"
+HINDSIGHT_API_BASE = "https://api.hindsight.vectorize.io/v1"
 HINDSIGHT_API_KEY = os.getenv("HINDSIGHT_API_KEY", "")
 PROMO_CODE = "MEMHACK409"
 

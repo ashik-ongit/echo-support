@@ -12,16 +12,13 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-
         <h2>Conversations</h2>
-
         <ul>
             <li>Order Issue</li>
             <li>Refund Request</li>
             <li>Login Problem</li>
             <li>Payment Failed</li>
         </ul>
-
     </aside>
 
     <!-- Chat Area -->
@@ -32,30 +29,30 @@
             Memory Active
         </div>
 
-        <div class="messages">
-
+        <!-- chat-box id added so script.js can find it -->
+        <div class="messages" id="chat-box">
             <div class="message agent">
                 Hello! How can I assist you today?
             </div>
-
-            <div class="message user">
-                I need help with my order.
-            </div>
-
         </div>
 
         <!-- Input -->
         <div class="input-bar">
-
-            <input type="text" placeholder="Type your message..." />
-
-            <button>Send</button>
-
+            <!-- id added so script.js can read the value -->
+            <input
+                type="text"
+                id="message-input"
+                placeholder="Type your message..."
+                onkeypress="if(event.key==='Enter') sendMessage()"
+            />
+            <!-- onclick added to trigger sendMessage() -->
+            <button onclick="sendMessage()">Send</button>
         </div>
 
     </main>
 
 </div>
 
+<script src="script.js"></script>
 </body>
 </html>
