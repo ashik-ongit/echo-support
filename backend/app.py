@@ -140,7 +140,7 @@ def reset_memory():
     local_memories.clear()
     save_memories([])
     return jsonify({"message": "Memory cleared successfully"}), 200
-
+//hi 
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
