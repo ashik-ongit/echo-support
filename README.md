@@ -1,85 +1,197 @@
-🤖 AI Agents That Learn Using Hindsight
+# 🎧 Echo Support
 
-Most AI systems today forget you the moment the conversation ends.
-They respond, but they don’t **remember**, **learn**, or **grow with you**.
+> An AI-powered customer support chatbot with persistent memory — built with Python, Groq (LLaMA 3.3 70B), and vanilla JavaScript.
 
-Our goal is to change that.
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-2.x-000000?style=flat&logo=flask&logoColor=white)
+![Groq](https://img.shields.io/badge/Groq-LLaMA_3.3_70B-F55036?style=flat&logo=groq&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![License](https://img.shields.io/badge/License-MIT-brightgreen?style=flat)
 
-We are building AI agents that don’t just answer questions — they understand people over time. By using *hindsight memory*,
-the system reflects on past conversations, learns user preferences, and adapts its behavior to feel more natural, personal, and human.
+---
 
-This transforms AI from a tool into something closer to a **thoughtful assistant that evolves with you**.
+## 📌 Overview
 
+**Echo Support** is a smart customer support chatbot that **remembers users across sessions**. Powered by **Groq's LLaMA 3.3 70B** and a custom memory layer via **Hindsight**, Echo doesn't just answer questions — it learns from every conversation and delivers a personalized experience every time a user returns.
 
-💡 Project Overview
+---
 
-This project is a memory-powered AI chat system designed to:
+## ✨ Features
 
-* 🧠 Remember past conversations using Hindsight Cloud
-* 🔁 Use previous interactions to build meaningful context
-* 🎯 Learn user preferences (tone, style, needs)
-* 💬 Deliver more personalized, human-like responses
-* 🎨 Provide a clean, premium chat experience inspired by Apple design
+- 🧠 **Persistent Memory** — Automatically extracts and stores facts from conversations  
+- 👋 **Personalized Welcome** — Greets returning users based on stored memory  
+- ⚡ **Groq-Powered AI** — Ultra-fast responses using LLaMA 3.3 70B  
+- 🔗 **Hindsight Integration** — Context-aware memory retrieval  
+- 💬 **Typing Animation** — Character-by-character response rendering  
+- 📋 **Live Memory Panel** — Displays learned user facts in real time  
+- 🗂️ **Chat History** — Automatically persists conversations  
+- 🔄 **Memory Reset** — Clear all stored data instantly  
+- 🎨 **Clean UI** — Built with pure HTML, CSS, and JavaScript  
 
-Instead of starting from zero every time, this AI **builds a relationship with the user over time**.
+---
 
+## 📸 Preview
 
-⚙️ Setup Instructions
+> Add screenshots here (recommended)
 
-1. Clone the Repository
+![Chat UI](./assets/chat-ui.png)
+![Memory Panel](./assets/memory-panel.png)
+
+---
+
+## 🗂️ Project Structure
+
+echo-support/
+├── backend/
+│   ├── app.py                    
+│   ├── hindsight_integration.py  
+│   ├── memories.json             
+│   └── .env                      
+├── frontend/
+│   ├── index.html                
+│   ├── script.js                 
+│   └── style.css                 
+├── .gitignore
+└── README.md
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Python 3.10+
+- Groq API Key → https://console.groq.com/
+
+---
+
+### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-link>
-cd project
+git clone https://github.com/ashik-ongit/echo-support.git
+cd echo-support
 ```
 
-2. Install Required Dependencies
+---
+
+### 2. Install Dependencies
 
 ```bash
-pip install requests
+cd backend
+pip install -r requirements.txt
 ```
 
-3. Configure API Access
+---
 
-* Open `hindsight_integration.py`
-* Replace:
+### 3. Configure Environment Variables
 
-```python
-API_KEY = "YOUR_API_KEY"
+Create a `.env` file inside the `backend/` folder:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
 ```
 
-with your actual Hindsight API key.
+---
 
-
-▶️ How to Run the Project
-
-### Step 1: Start Backend Server
-
-(Example using Flask)
+### 4. Run the Backend
 
 ```bash
 python app.py
 ```
 
-### Step 2: Open Frontend
-
-* Open `index.html` in your browser
-* Start chatting with the AI
+Server runs at: http://localhost:5000
 
 ---
 
-🔄 How It Works (Simple Flow)
+### 5. Run the Frontend
 
-1. User sends a message
-2. AI generates a response
-3. Conversation is stored in memory (Hindsight)
-4. Future responses use past context
-5. AI gradually learns and adapts to the user
+```bash
+cd frontend
+python -m http.server 3000
+```
 
+Open in browser: http://localhost:3000
 
-❤️ What Makes This Special
+---
 
-* Remembers conversations like a human would
-* Learns preferences instead of being re-trained
-* Creates a more natural and engaging experience
-* Moves AI from “stateless” → “relationship-based”
+## 🔌 API Reference
+
+| Method | Endpoint   | Description |
+|--------|------------|-------------|
+| POST   | /chat      | Send a message and receive AI reply |
+| GET    | /welcome   | Get personalized welcome message |
+| GET    | /memories  | Retrieve stored memory |
+| GET    | /history   | Get full conversation history |
+| POST   | /reset     | Clear memory and history |
+
+---
+
+## 📦 Example API Usage
+
+### POST /chat
+
+**Request**
+```json
+{
+  "message": "Hi, my name is Ashik"
+}
+```
+
+**Response**
+```json
+{
+  "reply": "Nice to meet you, Ashik!"
+}
+```
+
+---
+
+## 🧠 How Memory Works
+
+1. User sends a message  
+2. AI generates a response  
+3. A memory fact is extracted  
+4. Fact is saved to `memories.json`  
+5. On future chats → memory is injected into the prompt  
+6. Responses become personalized  
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer        | Technology |
+|-------------|-----------|
+| Backend     | Python, Flask, Flask-CORS |
+| AI Model    | Groq API — LLaMA 3.3 70B |
+| Memory      | Hindsight + JSON storage |
+| Frontend    | HTML5, CSS3, JavaScript |
+| Config      | python-dotenv |
+
+---
+
+## 🌐 Deployment (Optional)
+
+- Backend: Render / Railway / Docker  
+- Frontend: Netlify / GitHub Pages  
+
+---
+
+## 🤝 Contributing
+
+```bash
+git checkout -b feature/your-feature-name
+git commit -m "Add: your feature description"
+git push origin feature/your-feature-name
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 👨‍💻 Author
+
+Built by https://github.com/ashik-ongit
