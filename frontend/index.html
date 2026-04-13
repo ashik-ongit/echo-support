@@ -29,7 +29,6 @@
             Memory Active
         </div>
 
-        <!-- chat-box id added so script.js can find it -->
         <div class="messages" id="chat-box">
             <div class="message agent">
                 Hello! How can I assist you today?
@@ -38,18 +37,27 @@
 
         <!-- Input -->
         <div class="input-bar">
-            <!-- id added so script.js can read the value -->
             <input
                 type="text"
                 id="message-input"
                 placeholder="Type your message..."
                 onkeypress="if(event.key==='Enter') sendMessage()"
             />
-            <!-- onclick added to trigger sendMessage() -->
             <button onclick="sendMessage()">Send</button>
         </div>
 
     </main>
+
+    <!-- Memory Panel -->
+       <aside class="memory-panel">
+        <div class="memory-panel-header">
+            <h3>🧠 Agent Memory</h3>
+            <span id="memory-count">0 learned</span>
+        </div>
+        <div id="memory-list">
+            <p class="memory-empty">No memories yet. Start chatting!</p>
+        </div>
+    </aside>
 
 </div>
 

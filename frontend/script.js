@@ -1,5 +1,6 @@
 const chatBox = document.getElementById("chat-box");
 const input = document.getElementById("message-input");
+const memories = [];
 
 // 1. Send Message
 async function sendMessage() {
@@ -8,22 +9,25 @@ async function sendMessage() {
 
     displayMessage(message, "user");
     input.value = "";
-
     showLoading();
 
     try {
         const response = await fetch("http://localhost:5000/chat", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message })
         });
-
         const data = await response.json();
-
         removeLoading();
-        displayMessage(data.reply, "bot");
+
+        if (data.reply) {
+            typeMessage(data.reply, "bot");
+
+            if (data.memory && !memories.includes(data.memory)) {
+                memories.push(data.memory);
+                renderMemoryPanel();
+            }
+        }
 
     } catch (error) {
         removeLoading();
@@ -32,42 +36,77 @@ async function sendMessage() {
     }
 }
 
-// 2. Display Message
+// 2. Display Message instantly
 function displayMessage(message, sender) {
     const msgDiv = document.createElement("div");
     msgDiv.classList.add("message", sender);
-
     msgDiv.textContent = message;
     chatBox.appendChild(msgDiv);
-
     autoScroll();
 }
 
-// 3. Load History
+// 3. Typing animation for bot
+function typeMessage(message, sender) {
+    const msgDiv = document.createElement("div");
+    msgDiv.classList.add("message", sender);
+    chatBox.appendChild(msgDiv);
+    autoScroll();
+
+    let i = 0;
+    const interval = setInterval(() => {
+        msgDiv.textContent += message[i];
+        i++;
+        autoScroll();
+        if (i >= message.length) clearInterval(interval);
+    }, 18);
+}
+
+// 4. Render memory panel
+function renderMemoryPanel() {
+    const memList = document.getElementById("memory-list");
+    memList.innerHTML = "";
+
+    if (memories.length === 0) {
+        memList.innerHTML = '<p class="memory-empty">No memories yet. Start chatting!</p>';
+        return;
+    }
+
+    memories.forEach((mem, i) => {
+        const item = document.createElement("div");
+        item.classList.add("memory-item");
+        item.innerHTML = `
+            <span class="mem-index">#${i + 1}</span>
+            <span class="mem-text">${mem}</span>
+        `;
+        memList.appendChild(item);
+    });
+
+    const badge = document.getElementById("memory-count");
+    if (badge) badge.textContent = memories.length + " learned";
+}
+
+// 5. Load history
 async function loadHistory() {
     try {
         const response = await fetch("http://localhost:5000/history");
         const data = await response.json();
-
-        data.forEach(msg => {
-            displayMessage(msg.text, msg.sender);
-        });
-
+        data.forEach(msg => displayMessage(msg.text, msg.sender));
     } catch (error) {
         console.error("Error loading history:", error);
     }
 }
 
-// 4. Auto Scroll
+// 6. Auto scroll
 function autoScroll() {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// 5. Loading Indicator
+// 7. Loading indicator
 function showLoading() {
     const loading = document.createElement("div");
     loading.id = "loading";
-    loading.textContent = "Typing...";
+    loading.classList.add("message", "bot");
+    loading.innerHTML = '<span class="dot-typing"></span><span class="dot-typing"></span><span class="dot-typing"></span>';
     chatBox.appendChild(loading);
     autoScroll();
 }
@@ -77,5 +116,12 @@ function removeLoading() {
     if (loading) loading.remove();
 }
 
-// Load history when page opens
+// 8. Sidebar topic click
+document.querySelectorAll('.sidebar li').forEach(item => {
+    item.addEventListener('click', () => {
+        input.value = item.textContent.trim();
+        sendMessage();
+    });
+});
+
 window.onload = loadHistory;
