@@ -82,7 +82,12 @@ function renderMemoryPanel() {
     });
 
     const badge = document.getElementById("memory-count");
-    if (badge) badge.textContent = memories.length + " learned";
+    if (badge) {
+        badge.textContent = memories.length + " learned";
+        badge.classList.remove("pulse");
+        void badge.offsetWidth;
+        badge.classList.add("pulse");
+    }
 }
 
 // 5. Load history
@@ -105,7 +110,7 @@ function autoScroll() {
 function showLoading() {
     const loading = document.createElement("div");
     loading.id = "loading";
-    loading.classList.add("message", "bot");
+    loading.classList.add("message", "agent");
     loading.innerHTML = '<span class="dot-typing"></span><span class="dot-typing"></span><span class="dot-typing"></span>';
     chatBox.appendChild(loading);
     autoScroll();
@@ -124,4 +129,21 @@ document.querySelectorAll('.sidebar li').forEach(item => {
     });
 });
 
-window.onload = loadHistory;
+// 9. On load — fetch history then personalised welcome
+window.onload = async function() {
+    await loadHistory();
+
+    try {
+        const res = await fetch("http://localhost:5000/welcome");
+        const data = await res.json();
+        if (data.message) {
+            chatBox.innerHTML = "";
+            const welcome = document.createElement("div");
+            welcome.classList.add("message", "agent");
+            welcome.textContent = data.message;
+            chatBox.appendChild(welcome);
+        }
+    } catch(e) {
+        console.error("Welcome error:", e);
+    }
+};
