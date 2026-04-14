@@ -32,9 +32,10 @@
 
 ## 📸 Preview
 
-> Add screenshots here (recommended)
-
+###Chat UI
 ![Chat UI](./assets/chat-ui.png)
+
+###Memory panel
 ![Memory Panel](./assets/memory-panel.png)
 
 ---
