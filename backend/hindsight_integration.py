@@ -10,7 +10,7 @@ import requests
 from datetime import datetime
 from typing import Optional
 
-# ─── Configuration ────────────────────────────────────────────────────────────
+# ─── Configuration
 
 HINDSIGHT_API_BASE = "https://api.hindsight.cloud/v1"
 HINDSIGHT_API_KEY = os.getenv("HINDSIGHT_API_KEY", "")
